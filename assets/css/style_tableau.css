@@ -1,0 +1,217 @@
+ *{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+ }
+ :root{
+    --blue: #2a2185;
+    --width: #fff;
+    --gray: #f5f5f5;
+    --black2: #999;
+ }
+ body{
+    min-height: 100vh;
+    overflow: hidden;
+ }
+ .container{
+    position: relative;
+    width: 100%;
+ }
+ .navigation{
+    position: fixed;
+    width: 300px;
+    height: 100%;
+    background: var(--blue);
+    border-left: 10px solid var(--blue);
+    transition: all 0.5s ease;
+    overflow: hidden;
+ }
+ .navigation.active{
+    width: 103px;
+    
+ }
+ .navigation ul{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+ }
+ .navigation ul li{
+    position: relative;
+    width: 100%;
+    list-style: none;
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
+ } 
+ .navigation ul li:hover,
+ .navigation ul li.hovered{
+    background: var(--width);
+ }
+
+ .navigation ul li:nth-child(1){
+    margin-bottom: 40px;
+    pointer-events: none;
+ }
+ .navigation ul li a{
+    position: relative;
+    display: block;
+    width: 100%;
+    display: flex;
+    text-decoration: none;
+    color: var(--width);
+ }
+ .navigation ul li:hover a,
+ .navigation ul li.hovered a{
+   color: var(--blue);
+ }
+.navigation ul li a .icon{
+    position: relative;
+    display: block;
+    min-width: 60px;
+    height: 60px;
+    line-height: 75px;
+    text-align: center;
+
+ }
+ .navigation ul li a .icon ion-icon{
+    margin-top: 15px;
+    font-size: 1.80rem;   
+ }
+ .navigation ul li a .title{
+    position: relative;
+    display: block;
+    padding-left: 0 10px;
+    font-size: 1.6rem;
+    height: 60px;  
+    line-height: 60px;
+    text-align: start;
+    white-space: nowrap;
+ }
+ /*---------- customization du plznch imuakile qui sur le hover ----------*/
+     .navigation ul li:hover a::before,
+     .navigation ul li.hovered a::before{
+        content: "";
+        position: absolute;
+        right: 0;
+        top: -50px;
+        width: 50px;
+        height: 50px;
+        background-color: transparent;
+        border-radius: 50%;
+        box-shadow: 35px 35px 0 10px var(--width);
+        pointer-events: none;
+     }
+     .navigation ul li:hover a::after,
+     .navigation ul li.hovered a::after{
+        content: "";
+        position: absolute;
+        right: 0;
+        bottom: -50px;
+        width: 50px;
+        height: 50px;
+        background-color: transparent;
+        border-radius: 50%;
+        box-shadow: 35px -35px 0 10px var(--width);
+        pointer-events: none;
+     }
+/*--------------- main desing -------------*/
+ .main{
+    position: absolute;
+    width: calc(100% - 300px);
+    left: 300px;
+    min-width: 100vh;
+    background: var(--width);
+    transition: 0.5s ease;
+ }
+ .main.active{
+    left: 103px;
+    width: calc(100% - 103px);
+ }
+ .topbar{
+    width: 100%;
+    height: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+ }
+ .toggle{
+    position: relative;
+    width: 60px;
+    height: 60px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    cursor: pointer;
+ }
+ .search{
+    position: relative;
+    width: 30%;
+    margin: 0 10px;
+ }
+ .search label{
+    position: relative;
+    width: 100%;
+ }
+.search label input{
+    position: relative;
+    width: 100%;
+    height: 40px;
+    padding: 5px 20px;
+    padding-left: 35px;
+    border-radius: 30px;
+    outline: none;  
+}
+.search label ion-icon{
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    font-size: 1.5rem;
+ }
+
+ .user{
+    position: relative;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    top: 5px;
+    overflow: hidden;
+    cursor: pointer;
+ } 
+ .user img{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+ }
+/* ----------------- tableau de bord ------------------*/
+.dashboard-card {
+    border-radius: 1rem;
+    box-shadow: 0 4px 10px rgba(249, 247, 247, 0.05);
+    transition: transform 0.2s ease;
+  }
+  .dashboard-card:hover {
+    transform: translateY(-5px);
+  }
+  .icon-box {
+    font-size: 3rem;
+    background-color: #faf7f7;
+    color: #0d6efd;
+    border-radius: 0.75rem;
+    padding: 0.75rem;
+    display: inline-block;
+    width: 100px;
+  }
+  .min-cont {
+    background-color: #e6e6ed;
+    padding: 0;
+    border-radius: 0.75rem;  
+  }
+.lab{
+    margin-top: 0px;
+    color: yellowgreen;
+    font-size: 1.8rem;
+}

@@ -1,0 +1,93 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - WillPharma</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full space-y-8">
+            <div class="text-center">
+                <div class="flex justify-center">
+                    <i data-lucide="building-2" class="h-12 w-12 text-blue-600"></i>
+                </div>
+                <h2 class="mt-6 text-3xl font-bold text-gray-900">WillPharma</h2>
+                <p class="mt-2 text-sm text-gray-600">Connectez-vous à votre compte</p>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-sm border p-8">
+                <form class="space-y-6" onsubmit="handleLogin(event)">
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700">
+                            Email
+                        </label>
+                        <input 
+                            id="email" 
+                            name="email" 
+                            type="email" 
+                            required 
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="votre@email.com"
+                        >
+                    </div>
+
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700">
+                            Mot de passe
+                        </label>
+                        <input 
+                            id="password" 
+                            name="password" 
+                            type="password" 
+                            required 
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="••••••••"
+                        >
+                    </div>
+
+                    <div>
+                        <button 
+                            type="submit" 
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md font-medium transition-colors"
+                        >
+                            Se connecter
+                        </button>
+                    </div>
+                </form>
+
+                <div class="mt-6 text-center">
+                    <a href="index.html" class="text-blue-600 hover:text-blue-700 text-sm">
+                        ← Retour à l'accueil
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // Simulation de connexion
+            if (email && password) {
+                localStorage.setItem('user', JSON.stringify({
+                    name: 'Dr. Martin Dupont',
+                    email: email,
+                    role: 'Propriétaire'
+                }));
+                window.location.href = 'dashboard.html';
+            } else {
+                alert('Veuillez remplir tous les champs');
+            }
+        }
+    </script>
+</body>
+</html>

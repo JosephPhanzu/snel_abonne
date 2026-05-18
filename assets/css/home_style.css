@@ -1,0 +1,34 @@
+.section {
+    background-image: url(../images/bus.jpeg);
+    background-size: cover;
+    height: 100vh;
+    background-position: top center;
+    position: relative;
+    z-index: 1; /* Assurez-vous que le contenu reste au-dessus */
+    background: scroll;
+}
+
+.section::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black; /* Couleur du masque */
+    opacity: 0.8; /* Transparence du masque */
+    z-index: -1; /* Place le masque derrière le contenu */
+}
+section{
+    padding-top: 10%;
+}
+.title{
+    color: white;
+}
+h1{
+    font-size: 3rem;
+    position: relative;
+    color: white;
+    user-select: none; 
+    margin-bottom: 200px;   
+}

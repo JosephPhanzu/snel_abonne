@@ -1,0 +1,15 @@
+#info, #infoM, #infoQ, #info-user, #info-mdp {
+    bottom: 10px;
+    right: 10px;
+    color: rgb(255, 255, 255);
+    font-weight: bolder;
+    transition: all ease-in-out .4s;
+    z-index: 100;
+}
+
+.error{
+    background-color: rgba(233, 142, 6, 0.9);
+}
+.success{
+    background-color: rgba(11, 180, 6, 0.7);
+}
