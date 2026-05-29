@@ -10,6 +10,12 @@ ob_start();
     <button @click="openModal('conso')" class="bg-yellow-400 px-4 py-2 rounded-xl font-semibold"><i class="fas fa-plus"></i> Ajouter</button>
     </div>
 
+    <!-- Note sur le prix par kWh et la TVA de 3.5% ajoutée avec un design profession au moins 70 mots -->
+    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+        <p class="text-sm text-blue-700">💡 Note : Le prix par kWh est de <span class="font-bold">665 CDF</span>. Une TVA de <span class="font-bold">3.5%</span> est appliquée sur le montant total de la facture. Assurez-vous de prendre en compte ces éléments lors de la facturation pour garantir une tarification précise et conforme aux réglementations en vigueur.</p>
+    </div>
+
+
     <div class="flex flex-wrap gap-3 mb-4">
         <div>
             <label class="block text-sm font-medium">Abonné</label>

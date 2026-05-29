@@ -3,15 +3,18 @@
   use App\Permission;
 
   $permission = new Permission();
-//   if (!$session->isConnected() ) {
-//     $session->logout();
-//     header('Location: /login');
-//   }
+  if (!$session->isConnected() ) {
+    $session->logout();
+    header('Location: /login');
+  }
 
-  // $nom = $session->getNom();
+  $noms = $session->getNom();
   // $prenom = $session->getPrenom();
 
-  // $role = $session->getRole();
+  $nom = explode(' ', $noms)[0];
+  $prenom = explode(' ', $noms)[1];
+  
+  $role = $session->getRole();
 
 
   $currentPage = trim($_SERVER['REQUEST_URI'], '/');
@@ -89,11 +92,15 @@
       </div>
       <nav class="flex-1 px-3 py-6 space-y-1.5 overflow-y-auto">
         <template x-for="item in menuItems" :key="item.id">
-          <button @click="setPage(item.id)" 
-                  :class="currentPage === item.id ? 'bg-yellow-400 text-[#0f1d3a] font-semibold shadow-lg' : 'text-white/80 hover:bg-white/10 hover:text-white'"
-                  class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left">
-            <i :class="item.icon" class="text-lg w-5 text-center"></i>
-            <span x-text="item.label"></span>
+          <button 
+              @click="setPage(item.id)"
+              :class="currentPage === item.id
+                ? 'bg-yellow-400 text-[#0f1d3a] font-semibold shadow-lg'
+                : 'text-white/80 hover:bg-white/10 hover:text-white'"
+              class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left">
+
+              <i :class="item.icon" class="text-lg w-5 text-center"></i>
+              <span x-text="item.label"></span>
           </button>
         </template>
       </nav>
@@ -105,7 +112,7 @@
     <!-- ========== MAIN CONTENT ========== -->
     <div class="flex-1 flex flex-col min-w-0 bg-gray-50/80">
       <!-- NAVBAR HEADER -->
-      <header class="bg-white shadow-sm border-b border-gray-200 px-4 md:px-6 py-3 flex items-center gap-4 sticky top-0 z-30">
+      <header class="bg-white shadow-sm border-b border-gray-200 px-4 md:px-6 py-3 flex items-center gap-5 sticky top-0 z-30 p-4 mt-2x">
         <button @click="sidebarOpen = !sidebarOpen" class="md:hidden text-gray-700 text-2xl"><i class="fas fa-bars"></i></button>
         <div class="flex-1 flex items-center gap-3">
           <div class="relative w-full max-w-md">
@@ -115,11 +122,19 @@
           </div>
         </div>
         <div class="flex items-center gap-3 sm:gap-4">
-          <button class="relative text-gray-500 hover:text-yellow-600"><i class="far fa-bell text-xl"></i><span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border border-white"></span></button>
-          <div class="flex items-center gap-2 pl-2 border-l">
-            <div class="w-8 h-8 rounded-full bg-blue-800 text-white flex items-center justify-center text-sm font-bold">SK</div>
-            <span class="hidden sm:inline text-sm font-medium">Admin Nzadi</span>
+          <!-- <button class="relative text-gray-500 hover:text-yellow-600"><i class="far fa-bell text-xl"></i><span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border border-white"></span></button> -->
+          <div @click="profileMenuOpen = !profileMenuOpen" class="cursor-pointer flex items-center gap-2 pl-2 border-l">
+            <div class="w-8 h-8 rounded-full bg-blue-800 text-white flex items-center justify-center text-sm font-bold"><?= substr($prenom, 0, 1) . substr($nom, 0, 1) ?></div>
+            <span class="hidden sm:inline text-sm font-medium"><?= $prenom . ' ' . $nom ?></span>
           </div>
+          <!-- Dropdown de profil & bouton deconnexion -->
+          <div class="relative">
+            <div x-show="profileMenuOpen" @click.away="profileMenuOpen = false"
+                 class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-20"
+                 x-transition>
+              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Mon Profil</a>
+              <a href="#" id="deconnexion" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Déconnexion</a>
+            </div>
         </div>
       </header>
 
@@ -186,7 +201,8 @@
       </form>
     </div>
   </div>
-
+  <input type="hidden" name="currentPage" id="currentPage" value="<?= $currentPage ?>">
+  <input type="hidden" name="role" id="role" value="<?= $role ?>">
   <script>
 
     $(document).on('click', '#deconnexion', function(e){
@@ -198,50 +214,67 @@
   </script>
 
   <script>
+    const role = document.getElementById('role').value;
+    
     function snelApp() {
       return {
         sidebarOpen: false,
-        currentPage: 'dashboard',
+        currentPage: '<?= $currentPage ?>',
         globalSearch: '',
+        isUserAdmin: '',
+        role : role,
+
         menuItems: [
           { id: 'dashboard', label: 'Dashboard', icon: 'fas fa-th-large' },
-          { id: 'abonnes', label: 'Abonnés', icon: 'fas fa-users' },
-          { id: 'consommation', label: 'Consommation', icon: 'fas fa-bolt' },
+
+          role === 'agent'
+            ? { id: 'abonnes', label: 'Abonnés', icon: 'fas fa-users' }
+            : null,
+
+          role === 'agent'
+            ? { id: 'consommation', label: 'Consommation', icon: 'fas fa-bolt' }
+            : null,
+
           { id: 'factures', label: 'Factures', icon: 'fas fa-file-invoice' },
           { id: 'paiements', label: 'Paiements', icon: 'fas fa-credit-card' },
           { id: 'parametres', label: 'Paramètres', icon: 'fas fa-cog' }
-        ],
+        ].filter(Boolean),
 
         //Données simulées pour tests (remplacer par appels API réels)
         getDataFromDB() {
           // Ici vous feriez des appels AJAX pour récupérer les données réelles depuis votre backend
           // Exemple avec Axios :
+          if (role === 'agent'){
+              if (this.currentPage === 'abonnes' || this.currentPage === 'dashboard') {
+                axios.get('/get_abonnes')
+                  .then(res => {
+                    this.abonnes = res.data.data
+                    console.log(res.data.message);
+                  })
+                  .catch(err => console.error('Erreur chargement abonnés', err));
+              }
+              if (this.currentPage === 'consommation' || this.currentPage === 'dashboard') {
+                axios.get('/get_conso')
+                .then(res => {
+                  this.consommations = res.data.data;
+                  console.log(res.data.message);
+                })
+                .catch(err => console.error('Erreur chargement consommations', err));
+              }             
+              
+          }
           
-          // this.abonnes = [];
-          axios.get('/get_abonnes')
-          .then(res => {
-            this.abonnes = res.data.data
-            console.log(res.data.message);
-          })
-          .catch(err => console.error('Erreur chargement abonnés', err));
-          
-          axios.get('/get_conso')
-          .then(res => {
-            this.consommations = res.data.data;
-            console.log(res.data.message);
-          })
-          .catch(err => console.error('Erreur chargement consommations', err));
-
-          axios.get('/get_facture')
-          .then(res => {
-            this.factures = res.data.data;
-            console.log(res.data.message);
-          })
-          .catch(err => console.error('Erreur chargement factures', err));
-          
-          // axios.get('/api/paiements').then(res => this.paiements = res.data);
+          if (this.currentPage === 'factures' || this.currentPage === 'dashboard') {
+            axios.get('/get_facture')
+              .then(res => {
+                this.factures = res.data.data;
+                console.log(res.data.message);
+              })
+              .catch(err => console.error('Erreur chargement factures', err));
+          }
           
         },
+        profileMenuOpen: false,
 
         // données simulées
         abonnes: [
@@ -272,9 +305,8 @@
           this.$nextTick(()=> this.initChart());
         },
         setPage(page) { 
-          // this.currentPage = page; 
-          // if(window.innerWidth<768) this.sidebarOpen=false; 
-          window.location.href=page;
+          this.currentPage = page;
+          window.location.href = '/' + page;
         },
 
         
@@ -492,7 +524,6 @@
                   console.error(err);
                   alert('Une erreur est survenue lors de la suppression.');
               });
-
           } 
         },
         initChart() {

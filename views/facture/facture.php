@@ -4,14 +4,21 @@
 // use App\Facture_conv;
 $title = "Facture | Welcome";
 
-
+$role = $session->getRole();
 
 ob_start();
 ?>
 <div x-transition>
-    <h2 class="text-2xl font-bold mb-4">🧾 Factures</h2>
+    <h2 class="text-2xl font-bold mb-4">🧾 Factures <?= $role ?></h2>
+
+    <!-- Note expliquant le coût total de la facture par rapport au prix par kWh et la TVA de 3.5% ajoutée avec un design profession au moins 150 mots -->
+
+    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+        <p class="text-sm text-blue-700">💡 Note : Le montant total de la facture est calculé en multipliant la consommation en kWh par le prix unitaire de 665 CDF par kWh. Par exemple, si un abonné consomme 150 kWh, le coût de base serait de 150 kWh x 665 CDF/kWh = 15 000 CDF. Ensuite, une TVA de 3.5% est appliquée sur ce montant pour obtenir le total final de la facture. Dans cet exemple, la TVA serait de 15 000 CDF x 3.5% = 525 CDF, ce qui porterait le montant total à payer à 15 525 CDF. Il est important de comprendre cette structure tarifaire pour mieux gérer les factures et anticiper les coûts liés à la consommation d'électricité.</p>
+    </div>
 
     <div class="flex flex-wrap gap-3 mb-4">
+        <?php if($role == 'agent'): ?>
         <div>
             <label class="block text-sm font-medium">Abonné</label>
             <select x-model="filtreAbonne" class="mt-1 border rounded px-3 py-2">
@@ -21,6 +28,7 @@ ob_start();
             </template>
             </select>
         </div>
+        <?php endif; ?>
         <div>
             <label class="block text-sm font-medium">Mois</label>
             <select x-model="filtreMois" class="mt-1 border rounded px-3 py-2">

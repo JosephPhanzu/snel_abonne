@@ -10,6 +10,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <!-- Alpine.js pour la réactivité -->
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
+  <!-- CDN jquery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <style>
     /* Polices et transitions douces */
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -47,9 +49,19 @@
     .role-badge {
       background: linear-gradient(135deg, #1E3A8A, #16A34A);
     }
+    .error {
+      background-color: #FEE2E2;
+      border-color: #FECACA;
+      color: #B91C1C;
+    }
+    .success {
+      background-color: #ECFDF5;
+      border-color: #A7F3D0;
+      color: #065F46;
+    }
   </style>
 </head>
-<body class="flex items-center justify-center p-4 min-h-screen" x-data="authApp()" x-init="checkStoredSession()">
+<body class="flex items-center justify-center p-4 min-h-screen">
   
   <!-- Container principal -->
   <div class="w-full max-w-6xl mx-auto">
@@ -121,14 +133,14 @@
             </div>
             
             <!-- Message d'erreur -->
-            <div id="info" class="d-none" x-show="errorMessage" 
+            <div id="info" class="d-none py-3 px-4 rounded-lg" x-show="errorMessage" 
                  class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4 flex items-center gap-2 text-sm"
                  x-transition>
               <!-- <i class="fas fa-exclamation-circle"></i> -->
               <span x-text="errorMessage"></span>
             </div>
             
-            <form @submit.prevent="handleLogin()" class="space-y-5">
+            <form id="form-login" class="space-y-5">
               <!-- Email -->
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Email professionnel</label>
@@ -138,6 +150,7 @@
                     type="email" 
                     x-model="loginForm.email" 
                     required
+                    name="email"
                     placeholder="agent@snel.cd"
                     class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl text-sm focus:outline-none transition"
                   >
@@ -151,8 +164,10 @@
                   <i class="fas fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
                   <input 
                     :type="showPassword ? 'text' : 'password'"
+                    type="password"
                     x-model="loginForm.password" 
                     required
+                    name="mdp"
                     placeholder="••••••••"
                     class="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl text-sm focus:outline-none transition"
                   >
@@ -189,14 +204,6 @@
               </button>
             </form>
             
-            <!-- Lien inscription -->
-            <!-- <p class="text-center mt-6 text-sm text-gray-500">
-              Nouvel agent ? 
-              <button @click="currentView = 'register'" class="text-[#1E3A8A] font-semibold hover:underline">
-                Créer un compte
-              </button>
-            </p> -->
-            
           </div>
           
         </div>
@@ -205,228 +212,124 @@
   </div>
 
   <!-- Axios CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/axios@1.9.0/dist/axios.min.js"></script>
-
-    <script>
-        lucide.createIcons();
-
-        $(document).ready(function(){
-            
-            $(document).on('submit', '#form-login', async function(e) {
-                e.preventDefault();
-                formData = new FormData(this);
-
-                const res = await axios.post('/login', formData);
-                // const [status, message] = res.data;
-                console.log(res.data.message);
-                $('.btn-connect').addClass('loader');
-                $('.btn-connect').removeClass('hidden');
-                $('#info').removeClass('d-none success error');
-                if (res.data.status === 'success') {
-                    $('#info').addClass('success').hide().fadeIn("slow");
-                    window.location.replace(res.data.route);
-                } else {
-                    $('.btn-connect').removeClass('loader')
-                    $('#info').addClass('error').hide().fadeIn("slow");
-                }
-                $('#info').html(res.data.message);
-            })
-
-        })
-    </script>
+  <script src="https://cdn.jsdelivr.net/npm/axios@1.9.0/dist/axios.min.js"></script>
 
   <script>
-    function authApp() {
-      return {
-        // Vue actuelle : login, register, forgot
-        currentView: 'login',
-        
-        // Formulaires
-        loginForm: {
-          email: '',
-          password: '',
-          remember: false
-        },
-        registerForm: {
-          nom: '',
-          email: '',
-          role: 'Agent',
-          password: '',
-          confirmPassword: ''
-        },
-        forgotEmail: '',
-        
-        // États
-        showPassword: false,
-        isLoading: false,
-        errorMessage: '',
-        successMessage: '',
-        
-        // Utilisateur par défaut simulé (jamais stocké en clair dans la réalité)
-        defaultUser: {
-          email: 'admin@snel.cd',
-          password: '123456',
-          role: 'Admin'
-        },
-        
-        // Vérifier si une session existe déjà
-        checkStoredSession() {
-          const token = localStorage.getItem('snel_token');
-          if (token) {
-            // Optionnel : rediriger automatiquement si déjà connecté
-            // window.location.href = 'index.html';
-          }
-        },
-        
-        // Gestion de la connexion
-        handleLogin() {
-          this.clearMessages();
+      // lucide.createIcons();
+
+      $(document).ready(function(){
           
-          // Validation basique
-          if (!this.loginForm.email || !this.loginForm.password) {
-            this.errorMessage = 'Veuillez remplir tous les champs.';
-            return;
-          }
-          
-          if (!this.isValidEmail(this.loginForm.email)) {
-            this.errorMessage = 'Format d\'email invalide.';
-            return;
-          }
-          
-          this.isLoading = false;
-          
-          // Simulation d'appel API
-          setTimeout(() => {
-            // Vérification avec l'utilisateur par défaut
-            if (this.loginForm.email === this.defaultUser.email && 
-                this.loginForm.password === this.defaultUser.password) {
-              
-              // Génération d'un token simulé
-              const token = 'snel_' + btoa(this.loginForm.email + ':' + Date.now());
-              
-              // Stockage dans localStorage
-              localStorage.setItem('snel_token', token);
-              localStorage.setItem('snel_user', JSON.stringify({
-                email: this.loginForm.email,
-                role: this.defaultUser.role,
-                nom: 'Agent Nzadi'
-              }));
-              
-              // Gestion "Se souvenir de moi"
-              if (this.loginForm.remember) {
-                localStorage.setItem('snel_remember', 'true');
+          $(document).on('submit', '#form-login', async function(e) {
+              e.preventDefault();
+              formData = new FormData(this);
+
+              const res = await axios.post('/login', formData);
+              // const [status, message] = res.data;
+              console.log(res.data.message);
+              $('#info').removeClass('d-none success error');
+              if (res.data.status === 'success') {
+                  $('#info').addClass('success').hide().fadeIn("slow");
+                  window.location.replace(res.data.route);
+              } else {
+                  $('#info').addClass('error').hide().fadeIn("slow");
               }
+              $('#info').html(res.data.message);
+          })
+
+      })
+  </script>
+
+  <script>
+    // function authApp() {
+    //   return {
+    //     // Vue actuelle : login, register, forgot
+    //     currentView: 'login',
+    //     // Formulaires
+    //     loginForm: {
+    //       email: '',
+    //       password: '',
+    //       remember: false
+    //     },
+    //     forgotEmail: '',
+        
+    //     // États
+    //     showPassword: false,
+    //     isLoading: false,
+    //     errorMessage: '',
+    //     successMessage: '',
+        
+    //     // Gestion de la connexion
+    //     handleLogin() {
+    //       this.clearMessages();
+          
+    //       // Validation basique
+    //       if (!this.loginForm.email || !this.loginForm.password) {
+    //         this.errorMessage = 'Veuillez remplir tous les champs.';
+    //         return;
+    //       }
+          
+    //       if (!this.isValidEmail(this.loginForm.email)) {
+    //         this.errorMessage = 'Format d\'email invalide.';
+    //         return;
+    //       }
+          
+    //       this.isLoading = false;
+          
+    //       // Simulation d'appel API
+    //       setTimeout( async (e) => {
+            
+    //         e.preventDefault();
+    //             formData = new FormData();
+    //             formData.append('email', this.loginForm.email);
+    //             formData.append('password', this.loginForm.password);
+    //             alert('login');
+    //             const res = await axios.post('/login', formData);
+    //             // const [status, message] = res.data;
+    //             console.log(res.data.message);
+    //             // $('.btn-connect').addClass('loader');
+    //             // $('.btn-connect').removeClass('hidden');
+    //             $('#info').removeClass('d-none success error');
+    //             if (res.data.status === 'success') {
+
+    //               // Gestion "Se souvenir de moi"
+    //               if (this.loginForm.remember) {
+    //                 localStorage.setItem('snel_remember', 'true');
+    //               } else {
+    //                 localStorage.removeItem('snel_remember');
+    //               }
+
+    //               $('#info').addClass('success').hide().fadeIn("slow");
+    //               // window.location.replace(res.data.route);
+    //             } else {
+    //                 // // $('.btn-connect').removeClass('loader')
+    //                 $('#info').addClass('error').hide().fadeIn("slow");
+    //             }
+    //             $('#info').html(res.data.message);
               
-              // Redirection vers le dashboard
-              this.successMessage = 'Connexion réussie ! Redirection...';
-              setTimeout(() => {
-                window.location.href = 'index.html'; // Page dashboard SNEL
-              }, 800);
-              
-            } else {
-              this.errorMessage = 'Identifiants incorrects. Veuillez réessayer.';
-              this.isLoading = false;
-            }
-          }, 1200);
-        },
+    //       }, 1200);
+    //     },
         
-        // Gestion de l'inscription
-        handleRegister() {
-          this.clearMessages();
-          
-          // Validations
-          if (!this.registerForm.nom || !this.registerForm.email || 
-              !this.registerForm.password || !this.registerForm.confirmPassword) {
-            this.errorMessage = 'Tous les champs sont obligatoires.';
-            return;
-          }
-          
-          if (!this.isValidEmail(this.registerForm.email)) {
-            this.errorMessage = 'Format d\'email invalide.';
-            return;
-          }
-          
-          if (this.registerForm.password.length < 6) {
-            this.errorMessage = 'Le mot de passe doit contenir au moins 6 caractères.';
-            return;
-          }
-          
-          if (this.registerForm.password !== this.registerForm.confirmPassword) {
-            this.errorMessage = 'Les mots de passe ne correspondent pas.';
-            return;
-          }
-          
-          this.isLoading = false;
-          
-          // Simulation d'inscription
-          setTimeout(() => {
-            // Dans une vraie application, on enverrait les données au serveur
-            // Ici on simule un succès et on redirige vers la connexion
-            
-            // Note : Le mot de passe ne serait JAMAIS stocké en clair côté serveur
-            // Il serait hashé avec bcrypt ou équivalent
-            
-            this.successMessage = 'Compte créé avec succès ! Vous pouvez vous connecter.';
-            this.isLoading = false;
-            
-            // Réinitialiser le formulaire
-            this.registerForm = {
-              nom: '',
-              email: '',
-              role: 'Agent',
-              password: '',
-              confirmPassword: ''
-            };
-            
-            // Rediriger vers la connexion après un délai
-            setTimeout(() => {
-              this.currentView = 'login';
-              this.clearMessages();
-            }, 2000);
-            
-          }, 1500);
-        },
+    //     // Utilitaire validation email
+    //     isValidEmail(email) {
+    //       const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    //       return re.test(email);
+    //     },
         
-        // Gestion du mot de passe oublié
-        handleForgotPassword() {
-          this.clearMessages();
-          
-          if (!this.forgotEmail || !this.isValidEmail(this.forgotEmail)) {
-            this.errorMessage = 'Veuillez entrer un email valide.';
-            return;
-          }
-          
-          this.isLoading = false;
-          
-          // Simulation d'envoi d'email
-          setTimeout(() => {
-            this.successMessage = 'Un lien de réinitialisation a été envoyé à ' + this.forgotEmail;
-            this.forgotEmail = '';
-            this.isLoading = false;
-          }, 1500);
-        },
+    //     // Nettoyer les messages
+    //     clearMessages() {
+    //       this.errorMessage = '';
+    //       this.successMessage = '';
+    //     },
         
-        // Utilitaire validation email
-        isValidEmail(email) {
-          const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          return re.test(email);
-        },
-        
-        // Nettoyer les messages
-        clearMessages() {
-          this.errorMessage = '';
-          this.successMessage = '';
-        },
-        
-        // Observer les changements de vue pour nettoyer
-        init() {
-          this.$watch('currentView', () => {
-            this.clearMessages();
-            this.isLoading = false;
-          });
-        }
-      }
-    }
+    //     // Observer les changements de vue pour nettoyer
+    //     init() {
+    //       this.$watch('currentView', () => {
+    //         this.clearMessages();
+    //         this.isLoading = false;
+    //       });
+    //     }
+    //   }
+    // }
   </script>
 </body>
 </html>

@@ -4,7 +4,7 @@
 // use App\Facture_conv;
 $title = "Paiement | Welcome";
 
-
+$role = $session->getRole();
 
 ob_start();
 ?>
@@ -12,6 +12,7 @@ ob_start();
     <h2 class="text-2xl font-bold mb-4">💳 Paiements</h2>
 
     <div class="flex flex-wrap gap-3 mb-4">
+        <?php if($role == 'agent'): ?>
         <div>
             <label class="block text-sm font-medium">Abonné</label>
             <select x-model="filtreAbonne" class="mt-1 border rounded px-3 py-2">
@@ -21,6 +22,7 @@ ob_start();
             </template>
             </select>
         </div>
+        <?php endif; ?>
         <div>
             <label class="block text-sm font-medium">Mois</label>
             <select x-model="filtreMois" class="mt-1 border rounded px-3 py-2">

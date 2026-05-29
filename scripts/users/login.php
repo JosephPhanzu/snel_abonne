@@ -13,7 +13,7 @@
         
         if (isset($email) && isset($mdp)) {
             if (!empty($email) && !empty($mdp)) {
-                if (preg_match('/(@cnss.org)$/i', $email)) :
+                if (preg_match('/(@snel.org.cd)$/i', $email)) :
                     new Abonne();
                     $permission = new Permission();
 

@@ -30,7 +30,7 @@ class Abonne extends Database {
             'nom' => self::$nom,
             'email' => self::$email,
             'telephone' => self::$telephone,
-            'mdp' => self::$mdp,
+            'mdp' => password_hash(self::$mdp, PASSWORD_BCRYPT),
             'adresse' => self::$adresse,
             'commune' => self::$commune,
             'numero_compteur'=> self::$numero_compteur,

@@ -97,6 +97,17 @@ class Consommation extends Database {
         }
     }
 
+    public function getFacJoinConsoJoinAbByAb($code_abonne) {
+        try {
+            $stmt = self::$db->prepare(query: "SELECT f.*, c.mois, c.annee, a.nom FROM facture f JOIN consommation c ON f.code_conso = c.code JOIN abonne a ON c.code_abonne = a.code WHERE c.code_abonne = :code_abonne ORDER BY f.date_facture DESC");
+            $stmt->bindValue('code_abonne', $code_abonne, \PDO::PARAM_STR);
+            $stmt->execute();
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $th) {
+            die("Error lors de le recup de tous les factures" . $th->getMessage());
+        }
+    }
+
     public function getAllConsommationJoinAbonne() {
         try {
             $stmt = self::$db->prepare(query: "SELECT c.*, a.nom FROM $this->table c JOIN abonne a ON c.code_abonne = a.code ORDER BY c.annee DESC, c.mois DESC");
