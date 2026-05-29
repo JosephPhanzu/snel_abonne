@@ -155,4 +155,17 @@ class Abonne extends Database {
             die('Erreur lors de la suppression'. $th->getMessage());
         }
     }
+
+    public static function login($email, $mdp) {
+
+        $user = self::findByParams(self::$table, 'email = :email', ['email' => $email]);
+
+        if ($user) {
+            if (password_verify($mdp, $user['mdp'])) :
+                return $user;
+            endif;
+        }
+        
+        return [];
+    }
 }

@@ -21,8 +21,8 @@ class AuthentSession {
 
     // Charger les données depuis la session
     private function loadSession() {
-        if (isset($_SESSION['poly-pharborel'])) {
-            $userData = $_SESSION['poly-pharborel'];
+        if (isset($_SESSION['snel_abonne'])) {
+            $userData = $_SESSION['snel_abonne'];
             $this->code = $userData['code'] ?? null;
             $this->nom = $userData['nom'] ?? null;
             $this->email = $userData['email'] ?? null;
@@ -33,7 +33,7 @@ class AuthentSession {
 
     // Méthode de connexion
     public function login($userData) {
-        $_SESSION['poly-pharborel'] = [
+        $_SESSION['snel_abonne'] = [
             'code' => $userData['code'] ?? null,
             'nom' => $userData['nom'] ?? null,
             'email' => $userData['email'] ?? null,
@@ -70,14 +70,11 @@ class AuthentSession {
 
     // Vérifier si un utilisateur standard est connecté
     
-    public function isMedecinConnected(){
-        return $this->is_connected && $this->role === 'medecin';
+    public function isAgentConnected(){
+        return $this->is_connected && $this->role === 'agent';
     }
-    public function isLaboConnected(){
-        return $this->is_connected && $this->role === 'laboratoires';
-    }
-    public function isReceptionConnected(){
-        return $this->is_connected && $this->role === 'reception';
+    public function isAbonneConnected(){
+        return $this->is_connected && $this->role === 'abonne';
     }
 
     // Vérifier un rôle spécifique
@@ -137,10 +134,10 @@ class AuthentSession {
     // Mettre à jour les informations utilisateur
     public function updateUserInfo($data)
     {
-        if ($this->is_connected && isset($_SESSION['poly-pharborel'])) {
+        if ($this->is_connected && isset($_SESSION['snel_abonne'])) {
             foreach ($data as $key => $value) {
-                if (isset($_SESSION['poly-pharborel'][$key])) {
-                    $_SESSION['poly-pharborel'][$key] = $value;
+                if (isset($_SESSION['snel_abonne'][$key])) {
+                    $_SESSION['snel_abonne'][$key] = $value;
                     $this->$key = $value; // Mettre à jour la propriété
                 }
             }
