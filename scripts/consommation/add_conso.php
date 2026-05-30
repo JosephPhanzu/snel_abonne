@@ -48,7 +48,7 @@ try {
             $tva = $montant * 0.035;
             $montant_total = $montant + $tva;
             
-            $facture = new Facture($code_conso, $montant_total, 'Non Payé', $anneeAndMois);
+            $facture = new Facture($code_conso, $montant_total, 'Non Payée', $anneeAndMois);
 
             if ($facture->add()) :
                 messageServer('success','Consommation ajoutée avec succès!');

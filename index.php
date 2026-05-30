@@ -39,6 +39,7 @@ $routesGetMethode = [
     '/get_conso' => __DIR__ . '/scripts/consommation/get_conso.php',
     '/get_abonnes' => __DIR__ . '/scripts/abonne/get_abonnes.php',
     '/get_facture' => __DIR__ . '/scripts/consommation/get_facture.php',
+    '/get_paiement' => __DIR__ . '/scripts/paiement/get_paiement.php',
 
 ];
 
@@ -48,8 +49,7 @@ $routesPostMethod = [
     '/add_abonne' => __DIR__ . '/scripts/abonne/add_abonne.php',
     '/add_conso' => __DIR__ . '/scripts/consommation/add_conso.php',
     '/add_employe'=> __DIR__ . '/scripts/employe/add_employe.php',
-    '/add_paiement' => __DIR__ . '/scripts/employe/add_paiement.php',
-    '/add_produit'=> __DIR__ . '/scripts/produit/add_produit.php',
+    '/add_paiement' => __DIR__ . '/scripts/paiement/add_paiement.php',
 
     '/delete'=> __DIR__ . '/scripts/GenFunc/delete.php',
 ];

@@ -48,6 +48,9 @@ ob_start();
                     <th class="py-2 px-2">Montant</th>
                     <th class="py-2 px-2">Mois</th>
                     <th class="py-2 px-2">Statut</th>
+                    <?php if($role == 'abonne'): ?>
+                    <th class="py-2 px-2">Actions</th>
+                    <?php endif; ?>
                 </tr>
             </thead>
             <tbody>
@@ -57,8 +60,14 @@ ob_start();
                         <td class="py-2 px-2" x-text="f.montant+' CDF'"></td>
                         <td class="py-2 px-2" x-text="f.mois"></td>
                         <td class="py-2 px-2">
-                            <span :class="f.paye ? 'badge-paye' : 'badge-impaye'" class="px-2 py-0.5 rounded-full text-xs" x-text="f.paye ? 'Payé' : 'Impayé'"></span>
+                            <span :class="f.statut === 'Payée' ? 'badge-paye' : 'badge-impaye'" class="px-2 py-0.5 rounded-full text-xs" x-text="f.statut"></span>
                         </td>
+                        <?php if($role == 'abonne'): ?>
+                        <td class="py-2 px-2">
+                            <button @click="f.statut === 'Non payée' ? ajouterPaiement(f) : null" :class="f.statut === 'Non payée' ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'" class="text-white px-3 py-1 rounded" x-text="f.statut === 'Payée' ? 'Déjà Payer' : 'Payer'"></button>
+                            </button>
+                        </td>
+                        <?php endif; ?>
                     </tr>
                 </template>
             </tbody>

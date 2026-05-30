@@ -42,7 +42,9 @@ ob_start();
                     <th class="py-2 px-2">Montant</th>
                     <th class="py-2 px-2">Mois</th>
                     <th class="py-2 px-2">Statut</th>
+                    <?php if($role == 'abonne'): ?>
                     <th class="py-2 px-2">Actions</th>
+                    <?php endif; ?>
                 </tr>
             </thead>
             <tbody>
@@ -52,12 +54,14 @@ ob_start();
                         <td class="py-2 px-2" x-text="p.montant+' CDF'"></td>
                         <td class="py-2 px-2" x-text="p.mois"></td>
                         <td class="py-2 px-2">
-                            <span :class="p.paye ? 'badge-paye' : 'badge-impaye'" class="px-2 py-0.5 rounded-full text-xs" x-text="p.paye ? 'Payé' : 'Impayé'"></span>
+                            <span :class="p.statut === 'paye' ? 'badge-paye' : 'badge-impaye'" class="px-2 py-0.5 rounded-full text-xs" x-text="p.statut === 'paye' ? 'Payé' : 'Impayé'"></span>
                         </td>
+                        <?php if($role == 'abonne'): ?>
                         <td class="py-2 px-2">
-                            <button @click="togglePaiement(p)" :class="p.paye ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'" class="text-white px-3 py-1 rounded" x-text="p.paye ? 'Marquer comme impayé' : 'Marquer comme payé'">
+                            <button @click="togglePaiement(p.code)" :class="p.statut === 'impaye' ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'" class="text-white px-3 py-1 rounded" x-text="p.statut === 'impaye' ? 'Payer' : 'Déjà payé'"></button>
                             </button>
                         </td>
+                        <?php endif; ?>
                     </tr>
                 </template>
             </tbody>

@@ -143,7 +143,7 @@
 
         <!-- Dashboard Content -->
         <main class="p-4 sm:p-6 space-y-6">
-            <script src="https://cdn.jsdelivr.net/npm/axios@1.9.0/dist/axios.min.js"></script>
+            <!-- <script src="https://cdn.jsdelivr.net/npm/axios@1.9.0/dist/axios.min.js"></script> -->
             <?= $content ?? '' ?>
         </main>
 
@@ -159,6 +159,7 @@
       <h3 class="text-xl font-bold mb-4" x-text="modalTitre"></h3>
       <form @submit.prevent="sauvegarderModal()">
         <div id="info" class="d-none my-3 p-3 rounded-lg"></div>
+        <!-- Formulaire ajout abonné -->
         <template x-if="modalType==='abonne'">
           <div class="space-y-3">
             <input placeholder="Numéro client" x-model="formAbonne.numero_compte" class="w-full border p-2.5 rounded-lg">
@@ -175,11 +176,14 @@
             
           </div>
         </template>
+        <!-- Formulaire ajout consommation -->
         <template x-if="modalType==='conso'">
           <div class="space-y-3">
             <select x-model="formConso.abonneId" class="w-full border p-2.5 rounded-lg">
               <option value="">-- Abonné --</option>
-              <template x-for="a in abonnes" :key="a.id"><option :value="a.id" x-text="a.nom"></option></template>
+              <template x-for="a in abonnes" :key="a.id">
+                <option :value="a.id" x-text="a.nom"></option>
+              </template>
             </select>
             <div>
               <label for="ancien">Ancien Index</label>
@@ -194,6 +198,59 @@
             <input type="text" placeholder="Mois (ex: Mars 2026)" x-model="formConso.mois" class="w-full border p-2.5 rounded-lg">
           </div>
         </template>
+        <!-- Formulaire Paiement -->
+        <template x-if="modalType === 'paiement'">
+          <div class="space-y-3">
+
+            <div>
+              <label class="block text-sm font-medium">Méthode de paiement</label>
+              <select x-model="formPaiement.methode" class="w-full border p-2.5 rounded-lg">
+                <option value="">-- Choisir --</option>
+                <option value="mobile">Mobile Money</option>
+                <option value="card">Carte bancaire</option>
+              </select>
+            </div>
+
+            <!-- Mobile Money -->
+            <div x-show="formPaiement.methode === 'mobile'" class="space-y-2">
+              <label class="block text-sm font-medium">Fournisseur</label>
+              <select x-model="formPaiement.fournisseur" class="w-full border p-2.5 rounded-lg">
+                <option value="">-- Fournisseur --</option>
+                <option value="MPSA">MPSA</option>
+                <option value="OrangeMoney">Orange Money</option>
+                <option value="AirtelMoney">Airtel Money</option>
+              </select>
+
+              <input type="text" placeholder="Numéro téléphone" x-model="formPaiement.telephone" class="w-full border p-2.5 rounded-lg">
+            </div>
+
+            <!-- Carte bancaire -->
+            <div x-show="formPaiement.methode === 'card'" class="space-y-2">
+              <label class="block text-sm font-medium">Type de carte</label>
+              <select x-model="formPaiement.carteType" class="w-full border p-2.5 rounded-lg">
+                <option value="">-- Type de carte --</option>
+                <option value="Visa">Visa</option>
+                <option value="Master">Mastercard</option>
+                <option value="Amex">Amex</option>
+              </select>
+
+              <input type="text" placeholder="Nom du titulaire" x-model="formPaiement.titulaire" class="w-full border p-2.5 rounded-lg">
+              <input type="text" placeholder="Derniers 4 chiffres" x-model="formPaiement.last4" class="w-full border p-2.5 rounded-lg">
+            </div>
+
+            <div>
+              <!-- Montant de la facture séléctionné automatique -->
+              <label class="block text-sm font-medium">Montant (CDF)</label>
+              <input type="number" readonly step="1" :value="formPaiement.montant" min="0" x-model="formPaiement.montant" class="w-full border p-2.5 rounded-lg">
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium">Date</label>
+              <input type="date" x-model="formPaiement.date" class="w-full border p-2.5 rounded-lg">
+            </div>
+          </div>
+        </template>
+
         <div class="flex justify-end gap-2 mt-5">
           <button type="button" @click="modalOpen=false" class="px-4 py-2 border rounded-lg">Annuler</button>
           <button type="submit" class="bg-yellow-400 px-5 py-2 rounded-lg font-semibold text-blue-900">Enregistrer</button>
@@ -245,33 +302,36 @@
           // Ici vous feriez des appels AJAX pour récupérer les données réelles depuis votre backend
           // Exemple avec Axios :
           if (role === 'agent'){
-              if (this.currentPage === 'abonnes' || this.currentPage === 'dashboard') {
+
                 axios.get('/get_abonnes')
                   .then(res => {
                     this.abonnes = res.data.data
                     console.log(res.data.message);
                   })
                   .catch(err => console.error('Erreur chargement abonnés', err));
-              }
-              if (this.currentPage === 'consommation' || this.currentPage === 'dashboard') {
+
                 axios.get('/get_conso')
                 .then(res => {
                   this.consommations = res.data.data;
                   console.log(res.data.message);
                 })
-                .catch(err => console.error('Erreur chargement consommations', err));
-              }             
+                .catch(err => console.error('Erreur chargement consommations', err));         
               
           }
           
-          if (this.currentPage === 'factures' || this.currentPage === 'dashboard') {
             axios.get('/get_facture')
               .then(res => {
                 this.factures = res.data.data;
                 console.log(res.data.message);
               })
               .catch(err => console.error('Erreur chargement factures', err));
-          }
+
+            axios.get('/get_paiement')
+              .then(res => {
+                this.paiements = res.data.data;
+                console.log(res.data.message);
+              })
+              .catch(err => console.error('Erreur chargement paiements', err));
           
         },
         profileMenuOpen: false,
@@ -290,13 +350,15 @@
           { id:1, abonneId:1, montant:22500, mois:'Mars 2026', paye:false },
           { id:2, abonneId:2, montant:21000, mois:'Mars 2026', paye:true }
         ],
-        paiements: [
-          { id:1, abonneId:2, montant:21000, date:'2026-03-25', mode:'Mobile Money' }
-        ],
+        // paiements: [
+        //   { id:1, abonneId:2, montant:21000, date:'2026-03-25', mode:'Mobile Money' }
+        // ],
+
         filtreAbonne: '',
         modalOpen: false, modalType:'', modalTitre:'', editingId: null,
         formAbonne: { numero_compte:'', nom:'', adresse:'', telephone:'', actif:true },
         formConso: { abonneId:'', ancien:0, nouveau:0, mois:'' },
+        formPaiement: { abonneId:'', methode:'', fournisseur:'', telephone:'', transaction:'', montant:0, date:'', carteType:'', titulaire:'', last4:'' },
         chartInstance: null,
 
         initApp() {
@@ -447,6 +509,12 @@
           } else if(type==='conso') {
             this.modalTitre = 'Ajouter consommation';
             this.formConso = { abonneId:'', ancien:0, nouveau:0, mois:'' };
+          } else if(type==='facture') {
+            this.modalTitre = 'Ajouter facture';
+            this.formFacture = { abonneId:'', montant:0, mois:'', paye:false };
+          } else if(type==='paiement') {
+            this.modalTitre = 'Ajouter paiement';
+            // this.formPaiement = { abonneId:'', methode:'', fournisseur:'', telephone:'', transaction:'', montant:0, date:'', carteType:'', titulaire:'', last4:'' };
           }
           this.modalOpen = true;
         },
@@ -482,7 +550,18 @@
             formdata.append('mois', this.formFacture.mois);
             formdata.append('paye', this.formFacture.paye);
             endpoint = '/add_facture';
-          }
+          } else if (this.modalType === 'paiement') {
+            formdata.append('code_facture', this.formPaiement.code_facture);
+            formdata.append('montant', this.formPaiement.montant);
+             formdata.append('methode', this.formPaiement.methode);
+             formdata.append('fournisseur', this.formPaiement.fournisseur || '');
+             formdata.append('telephone', this.formPaiement.telephone || '');
+             formdata.append('date', this.formPaiement.date || new Date().toISOString().slice(0,10));
+             formdata.append('carteType', this.formPaiement.carteType || '');
+             formdata.append('titulaire', this.formPaiement.titulaire || '');
+             formdata.append('last4', this.formPaiement.last4 || '');
+             endpoint = '/add_paiement';
+           }
 
           let res = axios.post(endpoint, formdata)
           .then(res => {
@@ -503,6 +582,10 @@
               $('#info').html("Une erreur est survenue lors de l'enregistrement.");
           });
           // this.modalOpen = false;
+        },
+        ajouterPaiement(f) {
+          this.formPaiement = { code_facture: f.code, montant: f.montant, methode:'', fournisseur:'', telephone:'', transaction:'', date:'', carteType:'', titulaire:'', last4:'' };
+          this.openModal('paiement');
         },
         voirAbonne(a) { alert(`Détail : ${a.nom}, ${a.adresse}`); },
         modifierAbonne(a) { this.openModal('abonne', a); },
